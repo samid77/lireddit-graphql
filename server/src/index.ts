@@ -1,21 +1,16 @@
 import 'reflect-metadata';
 import {MikroORM} from "@mikro-orm/core";
-import {__prod__} from './constants';
 // import {Post} from './entities/Post';
 import microConfig from './mikro-orm.config';
 import express from 'express';
 import {ApolloServer} from 'apollo-server-express';
 import {buildSchema} from 'type-graphql'
 
-import {HelloResolver} from './resolvers/hello'
 import {PostResolver} from './resolvers/post'
 import {UserResolver} from './resolvers/user'
+import { HelloResolver } from './resolvers/hello';
 import {MyContext} from './types';
-
-// import redis from 'redis';
-// import * as redis from 'redis'
-// import session from 'express-session'
-// import connectRedis from 'connect-redis';
+import { __prod__ } from './constants';
 const { createClient } = require('redis')
 const session = require('express-session')
 
@@ -31,8 +26,6 @@ const main = async () => {
 
   const app = express();
 
-  // const RedisStore = connectRedis(session);
-  // const redisClient = redis.createClient()
   let RedisStore = require('connect-redis')(session)
   let redisClient = createClient()
 
@@ -56,9 +49,10 @@ const main = async () => {
     })
   )
 
+
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver, UserResolver],
+      resolvers: [PostResolver, UserResolver, HelloResolver],
       validate: false,
     }),
     context: ({req, res}): MyContext => ({em: orm.em, req, res})

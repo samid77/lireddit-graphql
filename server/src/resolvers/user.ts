@@ -31,6 +31,7 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
+
   @Mutation(() => UserResponse)
   async register(
     @Arg('options', () => UsernamePasswordInput) options: UsernamePasswordInput,

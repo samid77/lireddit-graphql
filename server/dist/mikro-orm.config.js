@@ -13,7 +13,7 @@ exports.default = {
         pattern: /^[\w-]+\d+\.[tj]s$/,
     },
     entities: [Post_1.Post, User_1.User],
-    dbName: 'lireddit3',
+    dbName: 'lireddit',
     type: 'postgresql',
     user: 'lireddituser',
     password: 'lireddituser',
