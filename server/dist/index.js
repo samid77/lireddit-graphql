@@ -15,12 +15,17 @@ const hello_1 = require("./resolvers/hello");
 const constants_1 = require("./constants");
 const { createClient } = require('redis');
 const session = require('express-session');
+const cors_1 = __importDefault(require("cors"));
 const main = async () => {
     const orm = await core_1.MikroORM.init(mikro_orm_config_1.default);
     await orm.getMigrator().up();
     const app = (0, express_1.default)();
     let RedisStore = require('connect-redis')(session);
     let redisClient = createClient();
+    app.use((0, cors_1.default)({
+        origin: "http://localhost:3000",
+        credentials: true
+    }));
     app.use(session({
         name: 'qid',
         store: new RedisStore({
@@ -45,7 +50,10 @@ const main = async () => {
         }),
         context: ({ req, res }) => ({ em: orm.em, req, res })
     });
-    apolloServer.applyMiddleware({ app });
+    apolloServer.applyMiddleware({
+        app,
+        cors: false
+    });
     app.listen(4000, () => {
         console.log(`Server started at port 4000...`);
     });

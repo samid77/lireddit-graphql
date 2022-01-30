@@ -9,10 +9,10 @@ import {buildSchema} from 'type-graphql'
 import {PostResolver} from './resolvers/post'
 import {UserResolver} from './resolvers/user'
 import { HelloResolver } from './resolvers/hello';
-import {MyContext} from './types';
 import { __prod__ } from './constants';
 const { createClient } = require('redis')
 const session = require('express-session')
+import cors from 'cors';
 
 
 const main = async () => {
@@ -28,6 +28,13 @@ const main = async () => {
 
   let RedisStore = require('connect-redis')(session)
   let redisClient = createClient()
+
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true
+    })
+  )
 
   app.use(
     session({
@@ -55,10 +62,13 @@ const main = async () => {
       resolvers: [PostResolver, UserResolver, HelloResolver],
       validate: false,
     }),
-    context: ({req, res}): MyContext => ({em: orm.em, req, res})
+    context: ({req, res}) => ({em: orm.em, req, res})
   });
 
-  apolloServer.applyMiddleware({app});
+  apolloServer.applyMiddleware({
+    app, 
+    cors: false
+  });
   
   app.listen(4000, () => {
     console.log(`Server started at port 4000...`)

@@ -77,12 +77,14 @@ let UserResolver = class UserResolver {
             };
         }
         const hashedPassword = await argon2_1.default.hash(options.password);
-        const user = em.create(User_1.User, { username: options.username, password: hashedPassword });
+        const user = em.create(User_1.User, {
+            username: options.username, password: hashedPassword
+        });
         try {
             await em.persistAndFlush(user);
         }
         catch (error) {
-            if (error.code === '23505' || error.detail.includes("already exists")) {
+            if (error.detail.includes("already exists")) {
                 console.error(`Duplicate user`);
                 return {
                     errors: [
